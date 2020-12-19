@@ -21,7 +21,10 @@ RUN ffmpeg -i "input.mp3" -af silencedetect=noise=$NOISE:d=$NOISE_D -f null - 2>
 
 RUN touch out.sh
 RUN echo 'myffmpeg() {'  >> out.sh
-RUN echo "    ffmpeg -ss \$1 -t \$2 -i input.mp3 fragment_\$1.mp3"  >> out.sh
+RUN echo '    var1=`awk "BEGIN{ print \$1 - 0.25 }"`
+RUN echo '    var2=`awk "BEGIN{ print \$2 + 0.50 }"`
+RUN echo "    ffmpeg -ss \$var1 -t \$var2 -i input.mp3 fragment_\$var1.mp3"  >> out.sh
+# RUN echo "    ffmpeg -ss \$1 -t \$2 -i input.mp3 fragment_\$1.mp3"  >> out.sh
 RUN echo '}'  >> out.sh
 
 RUN echo "silence_end=0" >> out.sh
@@ -30,11 +33,8 @@ RUN cat data/vol.txt | grep 'silence_' >> out.sh
 RUN sed -i 's/silence_/\nsilence_/g' out.sh
 RUN sed -i 's/ |//g' out.sh
 RUN sed -i 's/: /=/g' out.sh
-
 RUN sed -i 's/\[silencedetect.*//g' out.sh 
-
 RUN sed -i 's/silence_start.*/\0\nsong_duration=`awk "BEGIN{ print \$silence_start - \$silence_end }"`\nmyffmpeg $silence_end $song_duration/g' out.sh 
-
 
 RUN echo 'song_duration=`awk "BEGIN{ print $silence_start - $silence_end }"`\nmyffmpeg $silence_end $song_duration' >> out.sh
 RUN echo "rm -f data/*" >> out.sh
