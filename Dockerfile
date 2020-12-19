@@ -21,9 +21,11 @@ RUN ffmpeg -i "input.mp3" -af silencedetect=noise=$NOISE:d=$NOISE_D -f null - 2>
 
 RUN touch out.sh
 RUN echo 'myffmpeg() {'  >> out.sh
-RUN echo '    var1=`awk "BEGIN{ print \$1 - 0.25 }"`
-RUN echo '    var2=`awk "BEGIN{ print \$2 + 0.50 }"`
-RUN echo "    ffmpeg -ss \$var1 -t \$var2 -i input.mp3 fragment_\$var1.mp3"  >> out.sh
+RUN echo '    THRESHOLD=0.25'>> out.sh
+RUN echo '    VAR1=`awk "BEGIN{ print \$1 - \$THRESHOLD }"`'>> out.sh
+RUN echo '    VAR2=`awk "BEGIN{ print \$2 + \$THRESHOLD }"`'>> out.sh
+RUN echo "    ffmpeg -ss \$VAR1 -t \$VAR2 -i input.mp3 fragment_\$VAR1.mp3"  >> out.sh
+# RUN echo "    ffmpeg -ss \$var1 -t \$var2 -i input.mp3 fragment_\$var1.mp3"  >> out.sh
 # RUN echo "    ffmpeg -ss \$1 -t \$2 -i input.mp3 fragment_\$1.mp3"  >> out.sh
 RUN echo '}'  >> out.sh
 

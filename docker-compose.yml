@@ -6,9 +6,9 @@ services:
     build:
       context: .
       args:
-          # LINK_YOUTUBE: https://www.youtube.com/watch?v=CzC2NRYaGAY
-          NOISE: -30dB
+          LINK_YOUTUBE: https://www.youtube.com/watch?v=CzC2NRYaGAY
+          NOISE: -20dB
           NOISE_D: 0.5
-          LINK_YOUTUBE: https://www.youtube.com/watch?v=pM5auk0m-Po
+          # LINK_YOUTUBE: https://www.youtube.com/watch?v=pM5auk0m-Po
     volumes:
       - ./out:/app/data
