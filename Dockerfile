@@ -3,13 +3,13 @@
 
 FROM kmb32123/youtube-dl-server as mp3-downloader
 ARG LINK_YOUTUBE
-ARG NOISE
-ARG NOISE_D
 
 WORKDIR /app/
 RUN youtube-dl --extract-audio --audio-format mp3 $LINK_YOUTUBE
 
 FROM jrottenberg/ffmpeg
+ARG NOISE
+ARG NOISE_D
 
 WORKDIR /app/
 COPY --from=mp3-downloader /app/*.mp3 .
@@ -17,7 +17,7 @@ RUN mv *.mp3 input.mp3
 
 RUN mkdir -p data
 # RUN ffmpeg -i "input.mp3" -af silencedetect=noise=-30dB:d=0.5 -f null - 2> data/vol.txt
-RUN ffmpeg -i "input.mp3" -af silencedetect=noise=NOISE:d=NOISE_D -f null - 2> data/vol.txt
+RUN ffmpeg -i "input.mp3" -af silencedetect=noise=$NOISE:d=$NOISE_D -f null - 2> data/vol.txt
 
 RUN touch out.sh
 RUN echo 'myffmpeg() {'  >> out.sh
