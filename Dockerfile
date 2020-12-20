@@ -1,7 +1,7 @@
 # RUN ffmpeg -ss <silence_end - 0.25> -t <next_silence_start - silence_end + 2 * 0.25> -i input.mov word-N.mov
 # RUN ffmpeg -i "input.mov" -af silencedetect=noise=-30dB:d=0.5 -f null - 2> vol.txt
 
-FROM kmb32123/youtube-dl-server as mp3-downloader
+FROM kmb32123/youtube-dl-server as downloader
 ARG LINK_YOUTUBE
 
 WORKDIR /app/
@@ -12,7 +12,7 @@ ARG NOISE
 ARG NOISE_D
 
 WORKDIR /app/
-COPY --from=mp3-downloader /app/*.mp3 .
+COPY --from=downloader /app/*.mp3 .
 RUN mv *.mp3 input.mp3
 
 RUN mkdir -p data
