@@ -25,10 +25,12 @@ RUN echo '    THRESHOLD=0.25'>> out.sh
 RUN echo '    VAR1=`awk "BEGIN{ print \$1 - \$THRESHOLD }"`'>> out.sh
 RUN echo '    VAR2=`awk "BEGIN{ print \$2 + \$THRESHOLD }"`'>> out.sh
 RUN echo "    ffmpeg -ss \$VAR1 -t \$VAR2 -i input.mp4 fragment_\$VAR1.mp4"  >> out.sh
+RUN echo "    mv fragment_* data/" >> out.sh
 # RUN echo "    ffmpeg -ss \$var1 -t \$var2 -i input.mp4 fragment_\$var1.mp4"  >> out.sh
 # RUN echo "    ffmpeg -ss \$1 -t \$2 -i input.mp4 fragment_\$1.mp4"  >> out.sh
 RUN echo '}'  >> out.sh
 
+RUN echo "rm -f data/*" >> out.sh
 RUN echo "silence_end=0" >> out.sh
 RUN cat data/vol.txt | grep 'silence_' >> out.sh
 
@@ -39,8 +41,8 @@ RUN sed -i 's/\[silencedetect.*//g' out.sh
 RUN sed -i 's/silence_start.*/\0\nsong_duration=`awk "BEGIN{ print \$silence_start - \$silence_end }"`\nmyffmpeg $silence_end $song_duration/g' out.sh 
 
 RUN echo 'song_duration=`awk "BEGIN{ print $silence_start - $silence_end }"`\nmyffmpeg $silence_end $song_duration' >> out.sh
-RUN echo "rm -f data/*" >> out.sh
-RUN echo "mv fragment_* data/" >> out.sh
+# RUN echo "rm -f data/*" >> out.sh
+# RUN echo "mv fragment_* data/" >> out.sh
 
 RUN chmod +x out.sh
 
