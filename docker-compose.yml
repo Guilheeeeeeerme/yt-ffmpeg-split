@@ -6,11 +6,11 @@ services:
     build:
       context: .
       args:
-          LINK_YOUTUBE: https://www.youtube.com/watch?v=swFIjowXj60
-          # LINK_YOUTUBE: https://www.youtube.com/watch?v=CzC2NRYaGAY
+          LINK_YOUTUBE: https://www.youtube.com/watch?v=tpb8YPl11aI # trio e caiçara
+          # LINK_YOUTUBE: https://www.youtube.com/watch?v=swFIjowXj60 # engole o choro
+          # LINK_YOUTUBE: https://www.youtube.com/watch?v=CzC2NRYaGAY # trio
           NOISE: -20dB
           NOISE_D: 0.5
-          # LINK_YOUTUBE: https://www.youtube.com/watch?v=pM5auk0m-Po
     volumes:
       - ./out:/app/data
 
@@ -19,10 +19,10 @@ services:
       context: .
       dockerfile: ./mp4.dockerfile
       args:
-          LINK_YOUTUBE: https://www.youtube.com/watch?v=swFIjowXj60
-          # LINK_YOUTUBE: https://www.youtube.com/watch?v=CzC2NRYaGAY
+          LINK_YOUTUBE: https://www.youtube.com/watch?v=tpb8YPl11aI # trio e caiçara
+          # LINK_YOUTUBE: https://www.youtube.com/watch?v=swFIjowXj60 # engole o choro
+          # LINK_YOUTUBE: https://www.youtube.com/watch?v=CzC2NRYaGAY # trio
           NOISE: -20dB
           NOISE_D: 0.5
-          # LINK_YOUTUBE: https://www.youtube.com/watch?v=pM5auk0m-Po
     volumes:
       - ./mp4:/app/data
