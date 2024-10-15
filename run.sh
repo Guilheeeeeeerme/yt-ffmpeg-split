@@ -14,16 +14,16 @@ yt-dlp -f mp4 $LINK_YOUTUBE
 mkdir -p /data
 mkdir -p /data/parts
 
-mv *.mp4 data/input.mp4
+cp *.mp4 data/input.mp4
 
-ffmpeg -i data/input.mp4 -af silencedetect=noise=$NOISE:d=$NOISE_D -f null - 2> data/vol.txt
+ffmpeg -i input.mp4 -af silencedetect=noise=$NOISE:d=$NOISE_D -f null - 2> vol.txt
 
 echo '#!/bin/sh' > out.sh
 echo 'myffmpeg() {'  >> out.sh
 echo '    THRESHOLD=0.25'>> out.sh
 echo '    VAR1=`awk "BEGIN{ print \$1 - \$THRESHOLD }"`'>> out.sh
 echo '    VAR2=`awk "BEGIN{ print \$2 + \$THRESHOLD }"`'>> out.sh
-echo "    ffmpeg -ss \$VAR1 -t \$VAR2 -i data/input.mp4 fragment_\$VAR1.mp4"  >> out.sh
+echo "    ffmpeg -ss \$VAR1 -t \$VAR2 -i input.mp4 fragment_\$VAR1.mp4"  >> out.sh
 echo "    mv fragment_* data/parts/" >> out.sh
 
 echo '}'  >> out.sh
@@ -31,7 +31,7 @@ echo '}'  >> out.sh
 echo 'mkdir -p data/parts'>> out.sh
 echo "rm -f data/parts/*" >> out.sh
 echo "silence_end=0" >> out.sh
-cat data/vol.txt | grep 'silence_' >> out.sh
+cat vol.txt | grep 'silence_' >> out.sh
 
 sed -i 's/silence_/\nsilence_/g' out.sh
 sed -i 's/ |//g' out.sh
@@ -41,7 +41,5 @@ sed -i 's/silence_start.*/\0\nsong_duration=`awk "BEGIN{ print \$silence_start -
 
 echo 'song_duration=`awk "BEGIN{ print $silence_start - $silence_end }"`\nmyffmpeg $silence_end $song_duration' >> out.sh
 
-mv out.sh data/out.sh
-
-chmod +x data/out.sh
-sh data/out.sh
+chmod +x out.sh
+sh out.sh
