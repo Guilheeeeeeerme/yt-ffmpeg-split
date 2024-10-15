@@ -5,9 +5,10 @@ services:
   app:
     build:
       context: .
-      args:
-          LINK_YOUTUBE: https://www.youtube.com/watch?v=CzC2NRYaGAY
-          NOISE: -20dB
-          NOISE_D: 0.5
+    environment:
+      # LINK_YOUTUBE: https://www.youtube.com/watch?v=CzC2NRYaGAY
+      LINK_YOUTUBE: https://www.youtube.com/watch?v=MbLirwiFe9I
+      NOISE: -20dB
+      NOISE_D: 0.5
     volumes:
       - ./out:/app/data
