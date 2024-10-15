@@ -6,8 +6,8 @@ services:
     build:
       context: .
     environment:
-      # LINK_YOUTUBE: https://www.youtube.com/watch?v=CzC2NRYaGAY
-      LINK_YOUTUBE: https://www.youtube.com/watch?v=MbLirwiFe9I
+      LINK_YOUTUBE: https://www.youtube.com/watch?v=CzC2NRYaGAY
+      # LINK_YOUTUBE: https://www.youtube.com/watch?v=MbLirwiFe9I
       NOISE: -20dB
       NOISE_D: 0.5
     volumes:

@@ -1,9 +1,18 @@
 #!/bin/sh
 
-# get a variable LINK_YOUTUBE as a url string, or throw an error
-if [ -z "$LINK_YOUTUBE" ]; then
-    echo "LINK_YOUTUBE is not set"
-    exit 1
+mkdir -p data
+cat template.sh > data/main.sh
+exit 1
+
+# Check if the file input.mp4 does not exist
+if [ ! -f input.mp4 ]; then
+    # Ensure LINK_YOUTUBE is set, otherwise throw an error
+    if [ -z "$LINK_YOUTUBE" ]; then
+        echo "Error: LINK_YOUTUBE is not set"
+        exit 1
+    fi
+    # Download the video from the provided YouTube link
+    yt-dlp -f mp4 "$LINK_YOUTUBE" -o input.mp4
 fi
 
 
@@ -13,25 +22,11 @@ NOISE=${NOISE:--20dB}
 # get a variable NOISE_D, default is 0.5
 NOISE_D=${NOISE_D:-0.5}
 
-yt-dlp -f mp4 $LINK_YOUTUBE
+ffmpeg -i input.mp4 -af silencedetect=noise=$NOISE:d=$NOISE_D -f null - 2> vol.txt
 
-mkdir -p /data
-mkdir -p /data/parts
+cat vol.txt | grep 'silence_' >> main.sh
 
-mv *.mp4 data/input.mp4
-ffmpeg -i data/input.mp4 -af silencedetect=noise=$NOISE:d=$NOISE_D -f null - 2> data/vol.txt
+sh finish-main.sh
 
-cat template.sh > data/out.sh
-cat data/vol.txt | grep 'silence_' >> data/out.sh
-
-sed -i 's/silence_/\nsilence_/g' data/out.sh
-sed -i 's/ |//g' data/out.sh
-sed -i 's/: /=/g' data/out.sh
-sed -i 's/\[silencedetect.*//g' data/out.sh 
-sed -i 's/silence_start.*/\0\nsong_duration=`awk "BEGIN{ print \$silence_start - \$silence_end }"`\nmyffmpeg $silence_end $song_duration/g' data/out.sh 
-echo 'song_duration=`awk "BEGIN{ print $silence_start - $silence_end }"`\nmyffmpeg $silence_end $song_duration' >> data/out.sh
-
-# cp *.sh data/
-
-# chmod +x out.sh
-# sh ./out.sh
+chmod +x main.sh
+sh main.sh
