@@ -1,12 +1,18 @@
 #!/bin/sh
 
+rm -rf data/*
 mkdir -p data
+
+rm -rf data/parts
+mkdir -p data/parts
+
 
 # Ensure LINK_YOUTUBE is set, otherwise throw an error
 if [ -z "$LINK_YOUTUBE" ]; then
     echo "Error: LINK_YOUTUBE is not set"
     exit 1
 fi
+
 # Download the video from the provided YouTube link
 yt-dlp -f mp4 "$LINK_YOUTUBE" -o data/input.mp4
 
@@ -34,3 +40,6 @@ while IFS= read -r line; do
     [ $(echo "$noise_duration > 0" | bc) -eq 1 ] && sh split.sh $silence_end $noise_duration data/parts
   fi
 done < "data/vol.txt"
+
+# if noise_duration is greater than 0, and silence_end is not empty, run split.sh
+[ $(echo "$noise_duration > 0" | bc) -eq 1 ] && [ -n "$silence_end" ] && sh split.sh $silence_end $noise_duration data/parts
