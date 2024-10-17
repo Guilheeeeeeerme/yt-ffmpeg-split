@@ -3,8 +3,8 @@
 # get first argument as start_at
 start_at=$1
 
-# get second argument as duration
-duration=$2
+# get second argument as end_at
+end_at=$2
 
 # get the third as folder
 folder=$3
@@ -23,10 +23,10 @@ else
     end_threshold=$5
 fi
 
-echo "Splitting video at $start_at with duration $duration, start_threshold $start_threshold, end_threshold $end_threshold"
+echo "Splitting video at $start_at with end_at $end_at, start_threshold $start_threshold, end_threshold $end_threshold"
 
 VAR1=`awk "BEGIN{ print \$start_at - \$start_threshold }"`
-VAR2=`awk "BEGIN{ print \$duration + \$end_threshold }"`
-ffmpeg -ss $VAR1 -t $VAR2 -i data/input.mp4 fragment_$VAR1.mp4
+VAR2=`awk "BEGIN{ print \$end_at + \$end_threshold }"`
+ffmpeg -ss $VAR1 -to $VAR2 -i data/input.mp4 fragment_$VAR1.mp4
 mv fragment_* $folder
 

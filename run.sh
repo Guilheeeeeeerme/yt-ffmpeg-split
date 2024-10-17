@@ -25,21 +25,14 @@ NOISE_D=${NOISE_D:-0.5}
 ffmpeg -i data/input.mp4 -af silencedetect=noise=$NOISE:d=$NOISE_D -f null - 2> data/vol.txt
 
 
-noise_duration=0  # Initialize noise_duration
 
 while IFS= read -r line; do
   if echo "$line" | grep -q "silence_start:"; then
     silence_start=$(echo "$line" | awk '{print $NF}')
-    # noise_duration is last silence_end (if it exists) minus current silence_start
-    if [ -n "$silence_end" ]; then
-      noise_duration=$(awk "BEGIN{ print $silence_start - $silence_end }")
-    fi
+    [ $(echo "$silence_end > 0" | bc) -eq 1 ] && sh split.sh $silence_end $silence_start data/parts
   elif echo "$line" | grep -q "silence_end:"; then
     silence_end=$(echo "$line" | awk '{print $NF}' | tr -d '|')
-    # if noise_duration is greater than 0, run split.sh
-    [ $(echo "$noise_duration > 0" | bc) -eq 1 ] && sh split.sh $silence_end $noise_duration data/parts
   fi
 done < "data/vol.txt"
 
-# if noise_duration is greater than 0, and silence_end is not empty, run split.sh
-[ $(echo "$noise_duration > 0" | bc) -eq 1 ] && [ -n "$silence_end" ] && sh split.sh $silence_end $noise_duration data/parts
+[ $(echo "$silence_end > 0" | bc) -eq 1 ] && sh split.sh $silence_end $silence_start data/parts
